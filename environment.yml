@@ -20,3 +20,4 @@ dependencies:
     - subword_nmt==0.3.5
     - ipdb
     - -e .
+    - tensorboard

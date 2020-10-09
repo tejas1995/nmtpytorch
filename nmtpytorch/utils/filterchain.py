@@ -43,9 +43,9 @@ class FilterChain:
     }
 
     def __init__(self, filters):
-        assert not set(filters).difference(set(self.FILTERS.keys())), \
+        self.filters = filters.split(',')
+        assert not set(self.FILTERS).difference(set(self.FILTERS.keys())), \
             "Unknown evaluation filter given."
-        self.filters = filters
         self._funcs = [self.FILTERS[k] for k in self.filters]
 
     def _apply(self, list_of_strs):
