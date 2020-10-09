@@ -99,7 +99,8 @@ class MultimodalBiLSTMp(BiLSTMp):
                 x = self.feat_layer(
                     torch.cat([x, aux_x.repeat(x.shape[0], 1, 1)], dim=-1))
             elif self.feat_fusion == 'early_sum':
-                x.add_(self.feat_layer(aux_x).unsqueeze(0))
+                #x.add_(self.feat_layer(aux_x).unsqueeze(0))
+                x.add_(self.feat_layer(aux_x))
 
         # Pad with <eos> zero
         hs = F.pad(x, self.pad_tuple)

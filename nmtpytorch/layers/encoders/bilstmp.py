@@ -69,8 +69,8 @@ class BiLSTMp(nn.Module):
         # Generate a mask to detect padded sequences
         mask = x.ne(0).float().sum(2).ne(0).float()
 
-        if mask.eq(0).nonzero().numel() > 0:
-            logger.info("WARNING: Non-homogeneous batch in BiLSTMp.")
+        #if mask.eq(0).nonzero().numel() > 0:
+        #    logger.info("WARNING: Non-homogeneous batch in BiLSTMp.")
 
         # Pad with <eos> zero
         hs = F.pad(x, self.pad_tuple)

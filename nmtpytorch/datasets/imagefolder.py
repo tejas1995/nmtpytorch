@@ -76,7 +76,7 @@ class ImageFolderDataset(data.Dataset):
 
     @staticmethod
     def to_torch(batch, **kwargs):
-        return torch.stack(batch)
+        return torch.stack(batch).permute(1, 0, 2, 3)
 
     def __getitem__(self, idx):
         return self.read_image(self.image_files[idx])

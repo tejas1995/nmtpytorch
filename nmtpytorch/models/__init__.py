@@ -15,3 +15,4 @@ from .attentive_mmt import AttentiveMMT
 ###############
 from .asr import ASR
 from .multimodal_asr import MultimodalASR
+from .multimodal_asr_feats import MultimodalASRFeats

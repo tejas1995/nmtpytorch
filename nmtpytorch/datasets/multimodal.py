@@ -34,7 +34,7 @@ class MultimodalDataset(Dataset):
     """
     def __init__(self, data, mode, batch_size, vocabs, topology,
                  bucket_by, bucket_order=None, max_len=None,
-                 sampler_type='bucket', **kwargs):
+                 sampler_type='bucket', dump_attn=False, **kwargs):
         self.datasets = {}
         self.mode = mode
         self.vocabs = vocabs
@@ -42,6 +42,7 @@ class MultimodalDataset(Dataset):
         self.topology = topology
         self.bucket_by = bucket_by
         self.sampler_type = sampler_type
+        self.dump_attn = dump_attn
 
         # Disable filtering if not training
         self.max_len = max_len if self.mode == 'train' else None
@@ -59,10 +60,11 @@ class MultimodalDataset(Dataset):
                 'to take care of packing/padding/masking if any.')
 
         for key, ds in self.topology.all.items():
-            if self.mode == 'beam' and ds.trg:
-                # Skip target streams for beam-search
-                logger.info("Skipping '{}' as target".format(key))
-                continue
+            if self.dump_attn is not True:
+                if self.mode == 'beam' and ds.trg:
+                    # Skip target streams for beam-search
+                    logger.info("Skipping '{}' as target".format(key))
+                    continue
 
             try:
                 # Get the relevant dataset class
@@ -75,9 +77,12 @@ class MultimodalDataset(Dataset):
                 # Force <eos> for target side, relax it for source side
                 kwargs['eos'] = kwargs.get('eos', True) or ds.trg
                 # Construct the dataset
-                self.datasets[ds] = dataset_constructor(
-                    fname=data[key],
-                    vocab=vocabs.get(key, None), bos=ds.trg, **kwargs)
+                if ds._type == 'ImageFolder':
+                    self.datasets[ds] = dataset_constructor(root=data[key], **kwargs)
+                else:
+                    self.datasets[ds] = dataset_constructor(
+                        fname=data[key],
+                        vocab=vocabs.get(key, None), bos=ds.trg, **kwargs)
                 self.size_dict[ds] = len(self.datasets[ds])
             else:
                 logger.info("  Skipping as '{}' not defined. This may be an issue.".format(key))

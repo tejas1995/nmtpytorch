@@ -60,7 +60,8 @@ class NumpySequenceDataset(Dataset):
 
     def _read_tensor(self, fname):
         """Reads the .npy file."""
-        return np.load(fname)
+        x = np.load(fname)
+        return x
 
     def __getitem__(self, idx):
         # Each item is (t, feat_dim)
@@ -77,7 +78,7 @@ class NumpySequenceDataset(Dataset):
         # padded is (n_samples, t, feat_dim)
         # return (n, f, t) for compatibility with the other input sources
         return torch.from_numpy(
-            np.array(padded, dtype='float32')).transpose(1, 2)
+            np.array(padded, dtype='float32')).transpose(0, 1)
 
     def __len__(self):
         return self.size
